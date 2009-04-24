@@ -14,6 +14,15 @@ describe 'An unbound Variable' do
       big_cat.should == 'CAT'
     end
   end
+
+  it 'performs order-determining concurrency' do
+    local do |x, y, z|
+      Thread.new { unify y, x + 2 }
+      Thread.new { unify z, y + 3 }
+      Thread.new { unify x, 1 }
+      z.should == 6
+    end
+  end
   
   it 'binds on unification' do
     local do |animal|
