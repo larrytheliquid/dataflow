@@ -2,7 +2,7 @@ require "#{File.dirname(__FILE__)}/../dataflow"
 include Dataflow
 
 local do |stream|
-  unify stream, Array.new(5) { Dataflow::Variable.new }
+  unify stream, Array.new(5) { local {|v| v } }
   Thread.new { stream.each_with_index {|n, i| puts "echo client #{i+1}: #{n}" } }
   Thread.new { stream.each_with_index {|n, i| puts "double client #{i+1}: #{n*2}" } }
 
