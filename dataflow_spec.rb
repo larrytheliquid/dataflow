@@ -2,27 +2,40 @@ require 'rubygems'
 require 'spec'
 require 'dataflow'
 
-module Dataflow
-  describe 'A new Store' do
-    before { @store = Store.new }
-    
-    it 'should bind an unbound variable on unification' do
-      @store[:var] = 'cat'
-      @store[:var].should == 'cat'
-    end
+Spec::Runner.configure do |config|
+  config.include Dataflow
+end
 
-    it 'should not complain when unifying a bound variable with an equal object' do
-      lambda do
-        @store[:var] = 'cat'
-        @store[:var] = 'cat'
-      end.should_not raise_error
-    end
 
-    it 'should complain when unifying a bound variable with an unequal object' do
-      lambda do
-        @store[:var] = 'cat'
-        @store[:var] = 'dog'
-      end.should raise_error(Store::UnificationError)
+describe 'A new Variable' do
+  it 'should suspend if an unbound variable has a method called on it' do
+    pending
+  end
+  
+  it 'should bind an unbound variable on unification' do
+    local do |var|
+      unify var, 'cat'
+      var.should == 'cat'
     end
+  end
+
+  it 'should not complain when unifying a bound variable with an equal object' do
+    lambda do
+      local do |var|
+        unify var, 'cat'
+        unify var, 'cat'        
+        var.should == 'cat'
+      end
+    end.should_not raise_error
+  end
+
+  it 'should complain when unifying a bound variable with an unequal object' do
+    lambda do
+      local do |var|
+        unify var, 'cat'
+        unify var, 'dog'
+        var.should == 'cat'
+      end
+    end.should raise_error(Dataflow::UnificationError)
   end
 end
