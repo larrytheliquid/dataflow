@@ -17,10 +17,9 @@ module Dataflow
     def __unify__(value)
       raise UnificationError if @__value__ && @__value__ != value
       @__value__ = value
-      @__requesters__.each do |r|
+      while r = @__requesters__.pop
         r.wakeup if r.status == 'sleep'
       end
-      @__requesters__ = []
       @__value__
     end
     
