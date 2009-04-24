@@ -1,8 +1,8 @@
 h1. What's this?
 
 A Ruby library that adds Dataflow variables (inspired by the Oz
-language). Dataflow variables have the property that they can be only
-assigned to once, or have an equivalent value as an existing
+language). Dataflow variables have the property that they can only
+be bound/assigned to once, or have an equivalent value as an existing
 assignment (see "unification").
 
 Dataflow variables must be declared before they are used, and can be
@@ -14,7 +14,7 @@ h1. What's the point?
 
 Ruby is Object Oriented, and on top of that it has powerful reflection
 and meta-programming abilities. While these features are useful for
-certain problems, they are not in the declarative model. Staying in
+certain problems, they are not within the declarative model. Staying in
 the declarative model gives one 2 advantages:
 # It is easy to reason about what the program does
 # Simple but powerful concurrency is possible
@@ -25,3 +25,40 @@ programming model. This library lets you program Ruby in the
 declarative concurrent model when you need to take advantage of multiple cores
 (assuming a Ruby implementation that uses native threads in one way or
 another).
+
+The trick to this kind of programming is binding variables from other
+threads. The nice thing is that many existing
+libraries/classes/methods can still be used, just avoid
+side-effects. Use regular Ruby threading to create threads, use
+"local" or "declare" to create new variables, and use "unify" to bind variables.
+
+h1. Examples
+
+<pre>
+  # Local variables
+  include Dataflow
+  
+  local do |x, y, z|
+    # notice how the order automatically gets resolved
+    Thread.new { unify y, x + 2 }
+    Thread.new { unify z, y + 3 }
+    Thread.new { unify x, 1 }
+    z #=> 6
+  end
+</pre>
+
+<pre>
+  # Object-specific variables
+  class AnimalHouse
+    include Dataflow
+    declare :small_cat, :big_cat
+
+    def fetch_big_cat
+      Thread.new { unify big_cat, small_cat.upcase }
+      unify small_cat, 'cat'
+      big_cat
+    end
+  end
+
+  AnimalHouse.new.fetch_big_cat #=> 'CAT'
+</pre>

@@ -10,7 +10,7 @@ context 'Using "local" for local variables' do
   describe 'An unbound Variable' do
     it 'suspends if an unbound variable has a method called on it until it is bound' do
       local do |big_cat, small_cat|
-        t = Thread.new { unify big_cat, small_cat.upcase }
+        Thread.new { unify big_cat, small_cat.upcase }
         unify small_cat, 'cat'
         big_cat.should == 'CAT'
       end
@@ -19,7 +19,7 @@ context 'Using "local" for local variables' do
     it 'suspends if an unbound variable has a method called on it until it is bound (with nested local variables)' do
       local do |small_cat|
         local do |big_cat|
-          t = Thread.new { unify big_cat, small_cat.upcase }
+          Thread.new { unify big_cat, small_cat.upcase }
           unify small_cat, 'cat'
           big_cat.should == 'CAT'
         end
@@ -84,7 +84,7 @@ context 'Using "declare" for object-specific read-only attributes' do
   
   describe 'An unbound Variable' do
     it 'suspends if an unbound variable has a method called on it until it is bound' do
-      t = Thread.new { unify @store.big_cat, @store.small_cat.upcase }
+      Thread.new { unify @store.big_cat, @store.small_cat.upcase }
       unify @store.small_cat, 'cat'
       @store.big_cat.should == 'CAT'
     end
