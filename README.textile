@@ -12,7 +12,8 @@ unbound then the currently executing thread will suspend.
 
 h1. What's the point?
 
-Ruby is Object Oriented, and on top of that it has powerful reflection
+Ruby is Object Oriented (with the ability to mutate local, instance,
+and class variables, and even constants), and on top of that it has powerful reflection
 and meta-programming abilities. While these features are useful for
 certain problems, they are not within the declarative model. Staying in
 the declarative model gives one 2 advantages:
@@ -48,7 +49,7 @@ h1. Examples
 </pre>
 
 <pre>
-  # Object-specific variables
+  # Instance variables
   class AnimalHouse
     include Dataflow
     declare :small_cat, :big_cat
