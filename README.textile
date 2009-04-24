@@ -68,14 +68,17 @@ AnimalHouse.new.fetch_big_cat #=> 'CAT'
 # Data-driven concurrency
 include Dataflow
 
-local do |stream|
+local do |stream, doubles, triples, squares|
   unify stream, Array.new(5) { local {|v| v } }
-  Thread.new { stream.each_with_index {|n, i| puts "echo client #{i+1}: #{n}" } }
-  Thread.new { stream.each_with_index {|n, i| puts "double client #{i+1}: #{n*2}" } }
+  Thread.new { unify doubles, stream.map {|n| n*2 } }
+  Thread.new { unify triples, stream.map {|n| n*3 } }
+  Thread.new { unify squares, stream.map {|n| n**2 } }  
 
-  stream.each do |x|
-    unify x, rand(100)
-    sleep 2
-  end
+  stream.each {|x| unify x, rand(100) }
+
+  puts "original: #{stream.inspect}"
+  puts "doubles:  #{doubles.inspect}"
+  puts "triples:  #{triples.inspect}"
+  puts "squares:  #{squares.inspect}"  
 end
 </pre>
