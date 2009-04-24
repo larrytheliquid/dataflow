@@ -1,0 +1,27 @@
+h1. What's this?
+
+A Ruby library that adds Dataflow variables (inspired by the Oz
+language). Dataflow variables have the property that they can be only
+assigned to once, or have an equivalent value as an existing
+assignment (see "unification").
+
+Dataflow variables must be declared before they are used, and can be
+passed around as data without actually being bound. If the variable
+gets used (in this library this means a method call) while being
+unbound then the currently executing thread will suspend.
+
+h1. What's the point?
+
+Ruby is Object Oriented, and on top of that it has powerful reflection
+and meta-programming abilities. While these features are useful for
+certain problems, they are not in the declarative model. Staying in
+the declarative model gives one 2 advantages:
+# It is easy to reason about what the program does
+# Simple but powerful concurrency is possible
+
+Ruby, like many other OO languages, is facing the hurdles of taking
+advantage of the increase of processor cores within a simple parallel
+programming model. This library lets you program Ruby in the
+declarative concurrent model when you need to take advantage of multiple cores
+(assuming a Ruby implementation that uses native threads in one way or
+another).
