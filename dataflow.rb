@@ -3,21 +3,33 @@ module Dataflow
     vars = Array.new(block.arity) { Variable.new }
     block.call *vars
   end
-  
+
   def unify(variable, value)
-    if existing_value = variable.__value__
-      raise UnificationError unless value == existing_value
-    else
-      variable.__value__ = value
-    end
+    variable.__unify__ value
   end
 
   class Variable
     instance_methods.each { |m| undef_method m unless m =~ /^__/ }
-    attr_accessor :__value__
+    def initialize
+      @__requesters__ = []
+    end
+
+    def __unify__(value)
+      raise UnificationError if @__value__ && @__value__ != value
+      @__value__ = value
+      @__requesters__.each do |r|
+        r.wakeup if r.status == 'sleep'
+      end
+      @__requesters__ = []
+      @__value__
+    end
     
     def method_missing(name, *args, &block)
-      __value__.__send__(name, *args, &block)
+      if !@__value__
+        @__requesters__ << Thread.current
+        sleep
+      end
+      @__value__.__send__(name, *args, &block)
     end
   end
 

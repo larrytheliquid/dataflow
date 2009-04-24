@@ -6,35 +6,38 @@ Spec::Runner.configure do |config|
   config.include Dataflow
 end
 
-
-describe 'A new Variable' do
-  it 'should suspend if an unbound variable has a method called on it' do
-    pending
-  end
-  
-  it 'should bind an unbound variable on unification' do
-    local do |var|
-      unify var, 'cat'
-      var.should == 'cat'
+describe 'An unbound Variable' do
+  it 'suspends if an unbound variable has a method called on it until it is bound' do
+    local do |big_cat, small_cat|
+      t = Thread.new { unify big_cat, small_cat.upcase }
+      unify small_cat, 'cat'
+      big_cat.should == 'CAT'
     end
   end
+  
+  it 'binds on unification' do
+    local do |animal|
+      unify animal, 'cat'
+      animal.should == 'cat'
+    end
+  end
+end
 
-  it 'should not complain when unifying a bound variable with an equal object' do
+describe 'A bound Variable' do
+  it 'does not complain when unifying with an equal object' do
     lambda do
-      local do |var|
-        unify var, 'cat'
-        unify var, 'cat'        
-        var.should == 'cat'
+      local do |animal|
+        unify animal, 'cat'
+        unify animal, 'cat'        
       end
     end.should_not raise_error
   end
 
-  it 'should complain when unifying a bound variable with an unequal object' do
+  it 'complains when unifying with an unequal object' do
     lambda do
-      local do |var|
-        unify var, 'cat'
-        unify var, 'dog'
-        var.should == 'cat'
+      local do |animal|
+        unify animal, 'cat'
+        unify animal, 'dog'
       end
     end.should raise_error(Dataflow::UnificationError)
   end
