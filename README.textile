@@ -36,30 +36,46 @@ side-effects. Use regular Ruby threading to create threads, use
 h1. Examples
 
 <pre>
-  # Local variables
-  include Dataflow
-  
-  local do |x, y, z|
-    # notice how the order automatically gets resolved
-    Thread.new { unify y, x + 2 }
-    Thread.new { unify z, y + 3 }
-    Thread.new { unify x, 1 }
-    z #=> 6
-  end
+# Local variables
+include Dataflow
+ 
+local do |x, y, z|
+  # notice how the order automatically gets resolved
+  Thread.new { unify y, x + 2 }
+  Thread.new { unify z, y + 3 }
+  Thread.new { unify x, 1 }
+  z #=> 6
+end
 </pre>
 
 <pre>
-  # Instance variables
-  class AnimalHouse
-    include Dataflow
-    declare :small_cat, :big_cat
+# Instance variables
+class AnimalHouse
+  include Dataflow
+  declare :small_cat, :big_cat
 
-    def fetch_big_cat
-      Thread.new { unify big_cat, small_cat.upcase }
-      unify small_cat, 'cat'
-      big_cat
-    end
+  def fetch_big_cat
+    Thread.new { unify big_cat, small_cat.upcase }
+    unify small_cat, 'cat'
+    big_cat
   end
+end
 
-  AnimalHouse.new.fetch_big_cat #=> 'CAT'
+AnimalHouse.new.fetch_big_cat #=> 'CAT'
+</pre>
+
+<pre>
+# Data-driven concurrency
+include Dataflow
+
+local do |stream|
+  unify stream, Array.new(5) { local {|v| v } }
+  Thread.new { stream.each_with_index {|n, i| puts "echo client #{i+1}: #{n}" } }
+  Thread.new { stream.each_with_index {|n, i| puts "double client #{i+1}: #{n*2}" } }
+
+  stream.each do |x|
+    unify x, rand(100)
+    sleep 2
+  end
+end
 </pre>
