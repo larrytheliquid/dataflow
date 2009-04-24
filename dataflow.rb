@@ -1,4 +1,15 @@
 module Dataflow
+  def self.included(cls)
+    class << cls
+      def declare(*readers)
+        readers.each do |name|
+          variable = Variable.new
+          define_method(name) { variable }
+        end
+      end
+    end
+  end
+  
   def local(&block)
     vars = Array.new(block.arity) { Variable.new }
     block.call *vars
