@@ -1,3 +1,5 @@
+require 'thread'
+
 module Dataflow
   def self.included(cls)
     class << cls
@@ -20,25 +22,28 @@ module Dataflow
   end
 
   class Variable
+    MUTEX = Mutex.new
     instance_methods.each { |m| undef_method m unless m =~ /^__/ }
     def initialize
       @__requesters__ = []
     end
 
     def __unify__(value)
-      raise UnificationError if @__value__ && @__value__ != value
-      @__value__ = value
-      while r = @__requesters__.shift
-        r.wakeup if r.status == 'sleep'
+      MUTEX.synchronize do
+        raise UnificationError if @__value__ && @__value__ != value
+        @__value__ = value
+        while r = @__requesters__.shift
+          r.wakeup if r.status == 'sleep'
+        end
+        @__value__
       end
-      @__value__
     end
-    
+
     def method_missing(name, *args, &block)
-      if !@__value__
-        @__requesters__ << Thread.current
-        sleep
+      MUTEX.synchronize do        
+        @__requesters__ << Thread.current unless @__value__
       end
+      Thread.stop unless @__value__
       @__value__.__send__(name, *args, &block)
     end
   end
