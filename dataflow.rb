@@ -40,10 +40,10 @@ module Dataflow
     end
 
     def method_missing(name, *args, &block)
-      MUTEX.synchronize do        
+      MUTEX.synchronize do
         @__requesters__ << Thread.current unless @__value__
       end
-      Thread.stop unless @__value__
+      sleep unless @__value__
       @__value__.__send__(name, *args, &block)
     end
   end
