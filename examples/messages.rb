@@ -1,6 +1,4 @@
 require "#{File.dirname(__FILE__)}/../erlangprocess"
-include Dataflow
-
 
 Ping = ErlangProcess.new {
   3.times {
@@ -23,6 +21,8 @@ Pong = ErlangProcess.new {
     end
   }
 }
+
+include ErlangModule
 
 Ping.send "Ping"
 sleep 1
