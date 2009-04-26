@@ -1,4 +1,4 @@
-require 'thread'
+require 'monitor'
 
 module Dataflow
   def self.included(cls)
@@ -22,28 +22,30 @@ module Dataflow
   end
 
   class Variable
-    MUTEX = Mutex.new
     instance_methods.each { |m| undef_method m unless m =~ /^__/ }
+    LOCK = Monitor.new
     def initialize
-      @__requesters__ = []
+      @__binding__ = LOCK.new_cond
     end
 
     def __unify__(value)
-      MUTEX.synchronize do
-        raise UnificationError if @__value__ && @__value__ != value
-        @__value__ = value
-        while r = @__requesters__.shift
-          r.wakeup if r.status == 'sleep'
+      LOCK.synchronize do
+        if @__value__
+          raise UnificationError  if @__value__ != value
+        else
+          @__value__ = value
+          @__binding__.broadcast # wakeup all method callers
+          @__binding__ = nil # garbage collect condition
         end
-        @__value__
       end
+      @__value__
     end
 
     def method_missing(name, *args, &block)
-      MUTEX.synchronize do
-        @__requesters__ << Thread.current unless @__value__
-      end
-      sleep unless @__value__
+      # double-checked race condition to avoid going into synchronize
+      LOCK.synchronize do
+        @__binding__.wait unless @__value__
+      end unless @__value__ 
       @__value__.__send__(name, *args, &block)
     end
   end
