@@ -1,47 +1,28 @@
-require 'dataflow'
+require 'port'
 
 module Dataflow
-  module ActorModule
-    # Create a new unbound dataflow variable
-    def __push__
-      local do |x|
-        @__outerqueue__ << x 
-        @__innerqueue__ << x
-      end
-    end
-  
-    def __check__
-      @__outerqueue__ = [] unless defined? @__outerqueue__
-      @__innerqueue__ = [] unless defined? @__innerqueue__
-    end
+  class Actor < Thread
+    include Dataflow
+    #Instance variables aren't working properly
+    #declare :stream, :port
+    attr_reader :stream, :port
 
-    # Give an unbound variable to the sender
-    def __getouter__
-      __check__
-      __push__ if @__outerqueue__.empty?
-      @__outerqueue__.shift
-    end
-
-    # Give an unbound variable to the process
-    def __getinner__
-      __check__
-      __push__ if @__innerqueue__.empty?
-      @__innerqueue__.shift
+    def initialize(&block)
+      @stream = Variable.new
+      @port = Port.new @stream
+      #unify @port, Port.new(@stream)
+      super { instance_eval &block }
     end
 
     def send message
-      unify __getouter__, message
+      port.send message
     end
-  
-    def receive
-      __getinner__
-    end
-  end
 
-  class Actor < Thread
-    include ActorModule
-    def initialize(&block)
-      super { instance_eval &block }
+    private
+    def receive
+      value = @stream.head
+      stream = @stream.tail
+      value
     end
   end
 end

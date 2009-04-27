@@ -84,20 +84,40 @@ local do |stream, doubles, triples, squares|
 end
 </pre>
 
-h1. Actor Model using Dataflow
+h1. Ports using Dataflow
 
-This is a Ruby implementation of Erlang-style Actors built on top of dataflow variables. This works by extending the Thread class to have a 'mailbox' queue of dataflow variables.
+Ports are an extension of the declarative concurrent model to support nondeterministic behavior. They accomplish this through the use of a single state variable. Ports are also inspired by the Oz language.
 
-Just as the dataflow library shows Ruby's OO model and Thread library are sufficient to build up a declarative concurrent model, this shows that it is also sufficient to build up a message-passing Actor model.
+An Actor class in the style of Erlang message-passing processes is also provided. It makes use of the asynchronous behavior of ports, but otherwise uses no state variables.
 
-h1. Actor Model Examples
+h1. Examples using Ports
 
 <pre>
+include Dataflow
+
+local do |p, x|
+  unify p, Port.new(x)
+  p.send "1"
+  p.send 2
+  Thread.new {p.send 3}
+  Thread.new { puts "x.take 5: #{x.take 5}" }
+  p.send 4
+  p.send "5"
+  puts "x.take 1: #{x.take 1}"
+end
+# Give threads a chance to complete
+sleep 0.01
+</pre>
+
+h1. Examples using Actors
+
+<pre>
+include Dataflow
+
 # Canonical Ping-Pong example
-Ping = ErlangProcess.new {
+Ping = Actor.new {
   3.times {
-    msg = receive
-    case msg
+    case receive
     when "Ping"
       puts "Ping"
       Pong.send "Pong"
@@ -105,10 +125,9 @@ Ping = ErlangProcess.new {
   }
 }
 
-Pong = ErlangProcess.new {
+Pong = Actor.new {
   3.times {
-    msg = receive
-    case msg
+    case receive
     when "Pong"
       puts "Pong"
       Ping.send "Ping"
@@ -116,13 +135,13 @@ Pong = ErlangProcess.new {
   }
 }
 
-ErlangProcess.new {
+Actor.new {
   send "Hi"
   puts "Received: #{receive}"
   Ping.send "Ping"
 }
-
-sleep 1
+#Give threads a change to complete
+sleep 0.01
 </pre>
 
 h1. Contributors

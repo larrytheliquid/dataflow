@@ -1,11 +1,9 @@
 require "#{File.dirname(__FILE__)}/../actor"
-
 include Dataflow
 
 Ping = Actor.new {
   3.times {
-    msg = receive
-    case msg
+    case receive
     when "Ping"
       puts "Ping"
       Pong.send "Pong"
@@ -15,8 +13,7 @@ Ping = Actor.new {
 
 Pong = Actor.new {
   3.times {
-    msg = receive
-    case msg
+    case receive
     when "Pong"
       puts "Pong"
       Ping.send "Ping"
@@ -30,4 +27,4 @@ Actor.new {
   Ping.send "Ping"
 }
 
-sleep 1
+sleep 0.01
