@@ -45,10 +45,9 @@ module Dataflow
     end
 
     def method_missing(name, *args, &block)
-      # double-checked race condition to avoid going into synchronize
       LOCK.synchronize do
         __binding_condition__.wait unless @__bound__
-      end unless @__bound__
+      end
       @__value__.__send__(name, *args, &block)
     end
   end
