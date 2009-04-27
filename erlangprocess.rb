@@ -1,6 +1,6 @@
 require 'dataflow'
 
-module ErlangModule
+class Thread
   include Dataflow
 
   # Create a new unbound dataflow variable
@@ -33,16 +33,14 @@ module ErlangModule
   def send message
     unify __getouter__, message
   end
-
+  
   def receive
     __getinner__
   end
 end
 
-class ErlangProcess
-  include ErlangModule
-  
+class ErlangProcess < Thread
   def initialize(&block)
-    Thread.new { instance_eval(&block) }
+    super { instance_eval &block }
   end
 end
