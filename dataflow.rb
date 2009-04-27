@@ -5,8 +5,11 @@ module Dataflow
     class << cls
       def declare(*readers)
         readers.each do |name|
-          variable = Variable.new
-          define_method(name) { variable }
+          class_eval <<-RUBY
+            def #{name}
+              @__ivar_#{name}__ ||= Variable.new
+            end
+          RUBY
         end
       end
     end

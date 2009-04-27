@@ -27,4 +27,4 @@ Actor.new {
   Ping.send "Ping"
 }
 
-sleep 0.01
+sleep 0.1

@@ -12,4 +12,4 @@ local do |p, x|
   puts "x.take 1: #{x.take 1}"
 end
 # Give threads a chance to complete
-sleep 0.01
+sleep 0.1
