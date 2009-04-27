@@ -47,6 +47,7 @@ module Dataflow
     def method_missing(name, *args, &block)
       LOCK.synchronize do
         __binding_condition__.wait unless @__bound__
+        # TODO: Cache a class_eval'd method on this object
       end
       @__value__.__send__(name, *args, &block)
     end
