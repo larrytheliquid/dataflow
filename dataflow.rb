@@ -21,21 +21,24 @@ module Dataflow
     variable.__unify__ value
   end
 
+  # Note that this class uses instance variables rather than nicely
+  # initialized instance variables in get/set methods for memory and
+  # performance reasons
   class Variable
     instance_methods.each { |m| undef_method m unless m =~ /^__/ }
     LOCK = Monitor.new
-    def initialize
-      @__binding__ = LOCK.new_cond
-    end
+    # Lazy-load conditions to be nice on memory usage
+    def __binding_condition__() @__binding_condition__ ||= LOCK.new_cond end
 
     def __unify__(value)
       LOCK.synchronize do
-        if @__value__
-          raise UnificationError  if @__value__ != value
+        if @__bound__
+          raise UnificationError if @__value__ != value
         else
           @__value__ = value
-          @__binding__.broadcast # wakeup all method callers
-          @__binding__ = nil # garbage collect condition
+          @__bound__ = true
+          __binding_condition__.broadcast # wakeup all method callers
+          @__binding_condition__ = nil # garbage collect condition
         end
       end
       @__value__
@@ -44,8 +47,8 @@ module Dataflow
     def method_missing(name, *args, &block)
       # double-checked race condition to avoid going into synchronize
       LOCK.synchronize do
-        @__binding__.wait unless @__value__
-      end unless @__value__ 
+        __binding_condition__.wait unless @__bound__
+      end unless @__bound__
       @__value__.__send__(name, *args, &block)
     end
   end
