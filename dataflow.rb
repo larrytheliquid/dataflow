@@ -7,7 +7,7 @@ module Dataflow
         readers.each do |name|
           class_eval <<-RUBY
             def #{name}
-              @__ivar_#{name}__ ||= Variable.new
+              @__dataflow_#{name}__ ||= Variable.new
             end
           RUBY
         end
