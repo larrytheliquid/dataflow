@@ -9,16 +9,7 @@ module Dataflow
     class Stream
       # This is preferable to the attr_readers and initialized, but it doesn't work
       include Dataflow
-      #declare :tail, :head
-  
-      # This is uglier and should be replaced with the above
-      attr_reader :head, :tail
-      def initialize
-        local do |h, t|
-          @head = h
-          @tail = t
-        end
-      end
+      declare :tail, :head
     
       # Defining each allows us to use the enumerable mixin
       # None of the list can be garbage collected less the head is
@@ -51,3 +42,4 @@ module Dataflow
     end
   end
 end
+

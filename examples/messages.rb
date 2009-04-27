@@ -21,10 +21,7 @@ Pong = Actor.new {
   }
 }
 
-Actor.new {
-  send "Hi"
-  puts "Received: #{receive}"
-  Ping.send "Ping"
-}
+Actor.new { Ping.send "Ping" }
 
-sleep 0.01
+Ping.join
+Pong.join

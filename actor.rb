@@ -3,15 +3,14 @@ require 'port'
 module Dataflow
   class Actor < Thread
     include Dataflow
-    #Instance variables aren't working properly
-    #declare :port
-    attr_reader :port
+    declare :port
+    # An instance variable is needed for stream.
     attr_reader :stream
 
     def initialize(&block)
       @stream = Variable.new
-      @port = Port.new @stream
-      #unify @port, Port.new(@stream)
+      unify port, Port.new(@stream)
+      # Run this block in a new thread
       super { instance_eval &block }
     end
 

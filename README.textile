@@ -31,7 +31,15 @@ The trick to this kind of programming is binding variables from other
 threads. The nice thing is that many existing
 libraries/classes/methods can still be used, just avoid
 side-effects. Use regular Ruby threading to create threads, use
-"local" or "declare" to create new variables, and use "unify" to bind variables.
+"local" or "declare" to create new variables, and use "unify" to bind
+variables.
+
+h1. References
+
+The basis of dataflow variables around a language is not common among
+popular languages and may be confusing to some. For an in-depth
+introduction to the Oz language and the techniques used in this
+library see the book "Concepts, Techniques, and Models of Computer Programming":http://en.wikipedia.org/wiki/Concepts,_Techniques,_and_Models_of_Computer_Programming
 
 h1. Examples
 
@@ -114,7 +122,6 @@ h1. Examples using Actors
 <pre>
 include Dataflow
 
-# Canonical Ping-Pong example
 Ping = Actor.new {
   3.times {
     case receive
@@ -135,13 +142,10 @@ Pong = Actor.new {
   }
 }
 
-Actor.new {
-  send "Hi"
-  puts "Received: #{receive}"
-  Ping.send "Ping"
-}
-#Give threads a change to complete
-sleep 0.01
+Actor.new { Ping.send "Ping" }
+
+Ping.join
+Pong.join
 </pre>
 
 h1. Contributors

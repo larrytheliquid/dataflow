@@ -5,8 +5,11 @@ module Dataflow
     class << cls
       def declare(*readers)
         readers.each do |name|
-          variable = Variable.new
-          define_method(name) { variable }
+          class_eval <<-RUBY
+            def #{name}
+              @__ivar_#{name}__ ||= Variable.new
+            end
+          RUBY
         end
       end
     end
@@ -47,7 +50,7 @@ module Dataflow
     def method_missing(name, *args, &block)
       LOCK.synchronize do
         __binding_condition__.wait unless @__bound__
-        # TODO: Cache a class_eval'd method on this object
+        # TODO: Cache a instance_eval'd method on this object
       end
       @__value__.__send__(name, *args, &block)
     end
