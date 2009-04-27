@@ -3,9 +3,15 @@ require 'port'
 module Dataflow
   class Actor < Thread
     include Dataflow
+<<<<<<< HEAD:actor.rb
     declare :port
     # An instance variable is needed for stream.
     attr_reader :stream
+=======
+    #Instance variables aren't working properly
+    #declare :stream, :port
+    attr_reader :stream, :port
+>>>>>>> 2dc6c51... Corrected a typo in actor.rb:actor.rb
 
     def initialize(&block)
       @stream = Variable.new
@@ -20,10 +26,8 @@ module Dataflow
 
     private
     def receive
-      # By using an instance variable for stream, old messages
-      # can be properly garbage collected. Otherwise you'd be out of luck.
       value = @stream.head
-      @stream = @stream.tail
+      stream = @stream.tail
       value
     end
   end
