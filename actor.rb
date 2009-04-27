@@ -1,50 +1,34 @@
-require 'dataflow'
+require 'port'
 
 # larrytheliquid: Note this is still experimental and not thread-safe.
 # The idea will be to mimic Oz-style message passing where
 # even unbound variables can be passed as messages.
 module Dataflow
-  module ActorModule
-    # Create a new unbound dataflow variable
-    def __push__
-      local do |x|
-        @__outerqueue__ << x 
-        @__innerqueue__ << x
-      end
-    end
-  
-    def __check__
-      @__outerqueue__ = [] unless defined? @__outerqueue__
-      @__innerqueue__ = [] unless defined? @__innerqueue__
-    end
+  class Actor < Thread
+    include Dataflow
+    #Instance variables aren't working properly
+    #declare :port
+    attr_reader :port
+    attr_reader :stream
 
-    # Give an unbound variable to the sender
-    def __getouter__
-      __check__
-      __push__ if @__outerqueue__.empty?
-      @__outerqueue__.shift
-    end
-
-    # Give an unbound variable to the process
-    def __getinner__
-      __check__
-      __push__ if @__innerqueue__.empty?
-      @__innerqueue__.shift
+    def initialize(&block)
+      @stream = Variable.new
+      @port = Port.new @stream
+      #unify @port, Port.new(@stream)
+      super { instance_eval &block }
     end
 
     def send message
-      unify __getouter__, message
+      port.send message
     end
-  
-    def receive
-      __getinner__
-    end
-  end
 
-  class Actor < Thread
-    include ActorModule
-    def initialize(&block)
-      super { instance_eval &block }
+    private
+    def receive
+      # By using an instance variable for stream, old messages
+      # can be properly garbage collected. Otherwise you'd be out of luck.
+      value = @stream.head
+      @stream = @stream.tail
+      value
     end
   end
 end
