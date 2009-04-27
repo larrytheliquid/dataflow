@@ -6,7 +6,6 @@ module Dataflow
     LOCK = Mutex.new
 
     class Stream
-      # This is preferable to the attr_readers and initialized, but it doesn't work
       include Dataflow
       declare :tail, :head
     
