@@ -16,6 +16,14 @@ context 'Using "local" for local variables' do
       end
     end
 
+    it 'suspends if an unbound variable has a method called on it until it is bound with nil' do
+      local do |is_nil, var_nil|
+        Thread.new { unify is_nil, var_nil.nil? }
+        unify var_nil, nil 
+        is_nil.should be_true
+      end
+    end
+
     it 'suspends if an unbound variable has a method called on it until it is bound (with nested local variables)' do
       local do |small_cat|
         local do |big_cat|
@@ -78,7 +86,7 @@ end
 context 'Using "declare" for object-specific read-only attributes' do
   class Store
     include Dataflow
-    declare :animal, :big_cat, :small_cat, :x, :y, :z
+    declare :animal, :big_cat, :small_cat, :x, :y, :z, :is_nil, :var_nil
   end
   before { @store = Store.new }
   
@@ -87,6 +95,12 @@ context 'Using "declare" for object-specific read-only attributes' do
       Thread.new { unify @store.big_cat, @store.small_cat.upcase }
       unify @store.small_cat, 'cat'
       @store.big_cat.should == 'CAT'
+    end
+
+    it 'suspends if an unbound variable has a method called on it until it is bound with nil' do
+      Thread.new { unify @store.is_nil, @store.var_nil.nil? }
+      unify @store.var_nil, nil 
+      @store.is_nil.should be_true
     end
 
     it 'performs order-determining concurrency' do
