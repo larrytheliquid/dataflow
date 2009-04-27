@@ -1,6 +1,8 @@
-require "#{File.dirname(__FILE__)}/../erlangprocess"
+require "#{File.dirname(__FILE__)}/../actor"
 
-Ping = ErlangProcess.new {
+include Dataflow
+
+Ping = Actor.new {
   3.times {
     msg = receive
     case msg
@@ -11,7 +13,7 @@ Ping = ErlangProcess.new {
   }
 }
 
-Pong = ErlangProcess.new {
+Pong = Actor.new {
   3.times {
     msg = receive
     case msg
@@ -22,7 +24,7 @@ Pong = ErlangProcess.new {
   }
 }
 
-ErlangProcess.new {
+Actor.new {
   send "Hi"
   puts "Received: #{receive}"
   Ping.send "Ping"

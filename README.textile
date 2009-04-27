@@ -1,13 +1,96 @@
 h1. What's this?
 
-A Ruby implementation of Erlang-style Actors built on top of dataflow variables. This works by extending the Thread class to have a 'mailbox' queue of dataflow variables.
+A Ruby library that adds Dataflow variables (inspired by the Oz
+language). Dataflow variables have the property that they can only
+be bound/assigned to once, or have an equivalent value as an existing
+assignment (see "unification").
 
-Just as larrytheliquid's dataflow class shows that Ruby's OO model and Thread library are sufficient to build up a declarative concurrent model, this project shows that it is also sufficient to build up a message-passing Actor model.
+Dataflow variables must be declared before they are used, and can be
+passed around as data without actually being bound. If the variable
+gets used (in this library this means a method call) while being
+unbound then the currently executing thread will suspend.
 
-As an extra treat, there is a second dataflow implementation (dataflow2) that uses the Actor model instead of Mutexes. It's spec-compatible with the original dataflow, just change all the references to dataflow2. This is pretty much what dataflow variables would look like if they were implemented on the Erlang VM.
+h1. What's the point?
+
+Ruby is Object Oriented (with the ability to mutate local, instance,
+and class variables, and even constants), and on top of that it has powerful reflection
+and meta-programming abilities. While these features are useful for
+certain problems, they are not within the declarative model. Staying in
+the declarative model gives one 2 advantages:
+# It is easy to reason about what the program does
+# Simple but powerful concurrency is possible
+
+Ruby, like many other OO languages, is facing the hurdles of taking
+advantage of the increase of processor cores within a simple parallel
+programming model. This library lets you program Ruby in the
+declarative concurrent model when you need to take advantage of multiple cores
+(assuming a Ruby implementation that uses native threads in one way or
+another).
+
+The trick to this kind of programming is binding variables from other
+threads. The nice thing is that many existing
+libraries/classes/methods can still be used, just avoid
+side-effects. Use regular Ruby threading to create threads, use
+"local" or "declare" to create new variables, and use "unify" to bind variables.
 
 h1. Examples
 
+<pre>
+# Local variables
+include Dataflow
+ 
+local do |x, y, z|
+  # notice how the order automatically gets resolved
+  Thread.new { unify y, x + 2 }
+  Thread.new { unify z, y + 3 }
+  Thread.new { unify x, 1 }
+  z #=> 6
+end
+</pre>
+
+<pre>
+# Instance variables
+class AnimalHouse
+  include Dataflow
+  declare :small_cat, :big_cat
+
+  def fetch_big_cat
+    Thread.new { unify big_cat, small_cat.upcase }
+    unify small_cat, 'cat'
+    big_cat
+  end
+end
+
+AnimalHouse.new.fetch_big_cat #=> 'CAT'
+</pre>
+
+<pre>
+# Data-driven concurrency
+include Dataflow
+
+local do |stream, doubles, triples, squares|
+  unify stream, Array.new(5) { local {|v| v } }
+
+  Thread.new { unify doubles, stream.map {|n| n*2 } }
+  Thread.new { unify triples, stream.map {|n| n*3 } }
+  Thread.new { unify squares, stream.map {|n| n**2 } }  
+
+  Thread.new { stream.each {|x| unify x, rand(100) } }
+
+  puts "original: #{stream.inspect}"
+  puts "doubles:  #{doubles.inspect}"
+  puts "triples:  #{triples.inspect}"
+  puts "squares:  #{squares.inspect}"  
+end
+</pre>
+
+h1. Actor Model using Dataflow
+
+This is a Ruby implementation of Erlang-style Actors built on top of dataflow variables. This works by extending the Thread class to have a 'mailbox' queue of dataflow variables.
+
+Just as the dataflow library shows Ruby's OO model and Thread library are sufficient to build up a declarative concurrent model, this shows that it is also sufficient to build up a message-passing Actor model.
+
+h1. Actor Model Examples
 
 <pre>
 # Canonical Ping-Pong example
@@ -41,3 +124,7 @@ ErlangProcess.new {
 
 sleep 1
 </pre>
+
+h1. Contributors
+
+larrytheliquid, amiller
