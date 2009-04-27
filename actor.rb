@@ -1,5 +1,8 @@
 require 'dataflow'
 
+# larrytheliquid: Note this is still experimental and not thread-safe.
+# The idea will be to mimic Oz-style message passing where
+# even unbound variables can be passed as messages.
 module Dataflow
   module ActorModule
     # Create a new unbound dataflow variable
