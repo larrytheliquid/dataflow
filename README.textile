@@ -34,13 +34,6 @@ side-effects. Use regular Ruby threading to create threads, use
 "local" or "declare" to create new variables, and use "unify" to bind
 variables.
 
-h1. References
-
-The basis of dataflow variables around a language is not common among
-popular languages and may be confusing to some. For an in-depth
-introduction to the Oz language and the techniques used in this
-library see the book "Concepts, Techniques, and Models of Computer Programming":http://en.wikipedia.org/wiki/Concepts,_Techniques,_and_Models_of_Computer_Programming
-
 h1. Examples
 
 <pre>
@@ -142,6 +135,13 @@ Actor.new { Ping.send "Ping" }
 Ping.join
 Pong.join
 </pre>
+
+h1. References
+
+The basis of dataflow variables around a language is not common among
+popular languages and may be confusing to some. For an in-depth
+introduction to the Oz language and the techniques used in this
+library (including port objects and comparisons to Erlang message passing) see the book "Concepts, Techniques, and Models of Computer Programming":http://en.wikipedia.org/wiki/Concepts,_Techniques,_and_Models_of_Computer_Programming
 
 h1. Contributors
 
