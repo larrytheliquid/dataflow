@@ -4,8 +4,9 @@ module Dataflow
   class Actor < Thread
     include Dataflow
     #Instance variables aren't working properly
-    #declare :stream, :port
-    attr_reader :stream, :port
+    #declare :port
+    attr_reader :port
+    attr_reader :stream
 
     def initialize(&block)
       @stream = Variable.new
@@ -20,8 +21,10 @@ module Dataflow
 
     private
     def receive
+      # By using an instance variable for stream, old messages
+      # can be properly garbage collected. Otherwise you'd be out of luck.
       value = @stream.head
-      stream = @stream.tail
+      @stream = @stream.tail
       value
     end
   end
