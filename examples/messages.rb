@@ -22,7 +22,10 @@ Pong = ErlangProcess.new {
   }
 }
 
-include ErlangModule
+ErlangProcess.new {
+  send "Hi"
+  puts "Received: #{receive}"
+  Ping.send "Ping"
+}
 
-Ping.send "Ping"
 sleep 1
