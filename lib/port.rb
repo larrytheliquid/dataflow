@@ -16,7 +16,7 @@ module Dataflow
       include Enumerable
       def each
         s = self
-        while 1
+        loop do
           yield s.head
           s = s.tail
         end
