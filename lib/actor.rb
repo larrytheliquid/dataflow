@@ -1,5 +1,3 @@
-require 'port'
-
 module Dataflow
   class Actor < Thread
     include Dataflow

@@ -1,10 +1,4 @@
-require 'rubygems'
-require 'spec'
-require 'dataflow'
-
-Spec::Runner.configure do |config|
-  config.include Dataflow
-end
+require "#{File.dirname(__FILE__)}/spec_helper"
 
 context 'Using "local" for local variables' do
   describe 'An unbound Variable' do

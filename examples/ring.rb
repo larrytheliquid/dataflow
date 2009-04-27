@@ -1,9 +1,9 @@
-require "#{File.dirname(__FILE__)}/../actor"
+require "#{File.dirname(__FILE__)}/../dataflow"
 include Dataflow
 
 # Send M messages each along a ring of N nodes
-N = 40
-M = 20
+N = 4
+M = 2
 
 actors = []
 N.times do |n| 

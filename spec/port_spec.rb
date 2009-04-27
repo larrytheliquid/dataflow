@@ -1,11 +1,4 @@
-require 'rubygems'
-require 'spec'
-require 'dataflow'
-require 'port'
-
-Spec::Runner.configure do |config|
-  config.include Dataflow
-end
+require "#{File.dirname(__FILE__)}/spec_helper"
 
 describe 'Syncronously sending to a Port' do
   it 'extends the length of the stream and preserves order' do

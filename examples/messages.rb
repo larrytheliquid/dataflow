@@ -1,4 +1,4 @@
-require "#{File.dirname(__FILE__)}/../actor"
+require "#{File.dirname(__FILE__)}/../dataflow"
 include Dataflow
 
 Ping = Actor.new {

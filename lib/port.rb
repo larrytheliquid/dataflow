@@ -1,4 +1,3 @@
-require 'dataflow'
 require 'thread'
 
 module Dataflow

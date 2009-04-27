@@ -1,4 +1,4 @@
-require "#{File.dirname(__FILE__)}/../port"
+require "#{File.dirname(__FILE__)}/../dataflow"
 include Dataflow
 
 local do |p, x|
