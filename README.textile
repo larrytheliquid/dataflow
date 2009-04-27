@@ -1,11 +1,16 @@
 h1. What's this?
 
-This is a Ruby implementation of Erlang style actors built on top of larrytheliquid's dataflow variables.
+A Ruby implementation of Erlang-style Actors built on top of dataflow variables. This works by extending the Thread class to have a 'mailbox' queue of dataflow variables.
+
+Just as larrytheliquid's dataflow class shows that Ruby's OO model and Thread library are sufficient to build up a declarative concurrent model, this project shows that it is also sufficient to build up a message-passing Actor model.
+
+As an extra treat, there is a second dataflow implementation (dataflow2) that uses the Actor model instead of Mutexes. It's spec-compatible with the original dataflow, just change all the references to dataflow2. This is pretty much what dataflow variables would look like if they were implemented on the Erlang VM.
 
 h1. Examples
 
 
 <pre>
+# Canonical Ping-Pong example
 Ping = ErlangProcess.new {
   3.times {
     msg = receive
