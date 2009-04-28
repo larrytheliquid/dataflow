@@ -13,10 +13,10 @@ unbound then the currently executing thread will suspend.
 h1. What's the point?
 
 Ruby is Object Oriented (with the ability to mutate local, instance,
-and class variables, and even constants), and on top of that it has powerful reflection
-and meta-programming abilities. While these features are useful for
-certain problems, they are not within the declarative model. Staying in
-the declarative model gives one 2 advantages:
+class, and global variables, and even constants), and on top of that
+it has powerful reflection and meta-programming abilities. While these
+features are useful for certain problems, they are not within the
+declarative model. Staying in the declarative model gives one 2 advantages:
 # It is easy to reason about what the program does
 # Simple but powerful concurrency is possible
 
