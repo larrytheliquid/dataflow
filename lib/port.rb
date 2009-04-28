@@ -21,6 +21,17 @@ module Dataflow
           s = s.tail
         end
       end
+
+      # Backported Enumerable#take for JRuby in 1.8.6 mode
+      unless method_defined?(:take)
+        def take(num)
+          result = []
+          each_with_index do |x, i|
+            return result if num == i
+            result << x
+          end
+        end
+      end
     end
   
     # Create a stream object, bind it to the input variable
