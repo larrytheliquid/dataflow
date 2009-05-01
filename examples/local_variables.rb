@@ -3,9 +3,9 @@ include Dataflow
 
 local do |x, y, z|
   # notice how the order automatically gets resolved
-  Thread.new { unify y, x + 2 }
-  Thread.new { unify z, y + 3 }
-  Thread.new { unify x, 1 }
+  Fiber.new { unify y, x + 2 }.resume
+  Fiber.new { unify z, y + 3 }.resume
+  Fiber.new { unify x, 1 }.resume
   puts z
 end
   

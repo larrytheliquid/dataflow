@@ -4,7 +4,7 @@ context 'Using "local" for local variables' do
   describe 'An unbound Variable' do
     it 'suspends if an unbound variable has a method called on it until it is bound' do
       local do |big_cat, small_cat|
-        Thread.new { unify big_cat, small_cat.upcase }
+        Fiber.new { unify big_cat, small_cat.upcase }.resume
         unify small_cat, 'cat'
         big_cat.should == 'CAT'
       end
@@ -12,7 +12,7 @@ context 'Using "local" for local variables' do
 
     it 'suspends if an unbound variable has a method called on it until it is bound with nil' do
       local do |is_nil, var_nil|
-        Thread.new { unify is_nil, var_nil.nil? }
+        Fiber.new { unify is_nil, var_nil.nil? }.resume
         unify var_nil, nil 
         is_nil.should be_true
       end
@@ -21,7 +21,7 @@ context 'Using "local" for local variables' do
     it 'suspends if an unbound variable has a method called on it until it is bound (with nested local variables)' do
       local do |small_cat|
         local do |big_cat|
-          Thread.new { unify big_cat, small_cat.upcase }
+          Fiber.new { unify big_cat, small_cat.upcase }.resume
           unify small_cat, 'cat'
           big_cat.should == 'CAT'
         end
@@ -30,9 +30,9 @@ context 'Using "local" for local variables' do
 
     it 'performs order-determining concurrency' do
       local do |x, y, z|
-        Thread.new { unify y, x + 2 }
-        Thread.new { unify z, y + 3 }
-        Thread.new { unify x, 1 }
+        Fiber.new { unify y, x + 2 }.resume
+        Fiber.new { unify z, y + 3 }.resume
+        Fiber.new { unify x, 1 }.resume
         z.should == 6
       end
     end
@@ -86,21 +86,21 @@ context 'Using "declare" for object-specific read-only attributes' do
   
   describe 'An unbound Variable' do
     it 'suspends if an unbound variable has a method called on it until it is bound' do
-      Thread.new { unify @store.big_cat, @store.small_cat.upcase }
+      Fiber.new { unify @store.big_cat, @store.small_cat.upcase }.resume
       unify @store.small_cat, 'cat'
       @store.big_cat.should == 'CAT'
     end
 
     it 'suspends if an unbound variable has a method called on it until it is bound with nil' do
-      Thread.new { unify @store.is_nil, @store.var_nil.nil? }
+      Fiber.new { unify @store.is_nil, @store.var_nil.nil? }.resume
       unify @store.var_nil, nil 
       @store.is_nil.should be_true
     end
 
     it 'performs order-determining concurrency' do
-      Thread.new { unify @store.y, @store.x + 2 }
-      Thread.new { unify @store.z, @store.y + 3 }
-      Thread.new { unify @store.x, 1 }
+      Fiber.new { unify @store.y, @store.x + 2 }.resume
+      Fiber.new { unify @store.z, @store.y + 3 }.resume
+      Fiber.new { unify @store.x, 1 }.resume
       @store.z.should == 6
     end
     

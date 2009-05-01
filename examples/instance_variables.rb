@@ -5,7 +5,7 @@ class AnimalHouse
   declare :small_cat, :big_cat
 
   def fetch_big_cat
-    Thread.new { unify big_cat, small_cat.upcase }
+    Fiber.new { unify big_cat, small_cat.upcase }.resume
     unify small_cat, 'cat'
     big_cat
   end
