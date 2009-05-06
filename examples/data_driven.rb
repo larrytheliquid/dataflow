@@ -4,11 +4,11 @@ include Dataflow
 local do |stream, doubles, triples, squares|
   unify stream, Array.new(5) { local {|v| v } }
   
-  Thread.new { unify doubles, stream.map {|n| n*2 } }
-  Thread.new { unify triples, stream.map {|n| n*3 } }
-  Thread.new { unify squares, stream.map {|n| n**2 } }  
+  Fiber.new { unify doubles, stream.map {|n| n*2 } }.resume
+  Fiber.new { unify triples, stream.map {|n| n*3 } }.resume
+  Fiber.new { unify squares, stream.map {|n| n**2 } }.resume
 
-  Thread.new { stream.each {|x| unify x, rand(100) } }
+  Fiber.new { stream.each {|x| unify x, rand(100) } }.resume
 
   puts "original: #{stream.inspect}"
   puts "doubles:  #{doubles.inspect}"

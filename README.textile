@@ -1,148 +1,19 @@
-h1. What's this?
+h1. Dataflow Fibers Branch
 
-A Ruby library that adds Dataflow variables (inspired by the Oz
-language). Dataflow variables have the property that they can only
-be bound/assigned to once, or have an equivalent value as an existing
-assignment (see "unification").
+A Fibers (coroutines) branch of the "thread-based Dataflow library":http://github.com/larrytheliquid/dataflow/tree/master
 
-Dataflow variables must be declared before they are used, and can be
-passed around as data without actually being bound. If the variable
-gets used (in this library this means a method call) while being
-unbound then the currently executing thread will suspend.
+See the link above for more information about Dataflow. This
+particular branch is experimenting with using Fibers instead of
+threads. A Fiber in Ruby 1.9 has significantly less creation and
+memory costs compared to threads. On the downside, true concurrency
+from multi-core processors is not realized. Nevertheless, Dataflow can
+be beneficial for declarative program modeling even withou true
+concurrency. 
 
-h1. What's the point?
-
-Ruby is Object Oriented (with the ability to mutate local, instance,
-class, and global variables, and even constants), and on top of that
-it has powerful reflection and meta-programming abilities. While these
-features are useful for certain problems, they are not within the
-declarative model. Staying in the declarative model gives one 2 advantages:
-# It is easy to reason about what the program does
-# Simple but powerful concurrency is possible
-
-Ruby, like many other OO languages, is facing the hurdles of taking
-advantage of the increase of processor cores within a simple parallel
-programming model. This library lets you program Ruby in the
-declarative concurrent model when you need to take advantage of multiple cores
-(assuming a Ruby implementation that uses native threads in one way or
-another).
-
-The trick to this kind of programming is binding variables from other
-threads. The nice thing is that many existing
-libraries/classes/methods can still be used, just avoid
-side-effects. Use regular Ruby threading to create threads, use
-"local" or "declare" to create new variables, and use "unify" to bind
-variables.
-
-h1. Examples
-
-<pre>
-# Local variables
-include Dataflow
- 
-local do |x, y, z|
-  # notice how the order automatically gets resolved
-  Thread.new { unify y, x + 2 }
-  Thread.new { unify z, y + 3 }
-  Thread.new { unify x, 1 }
-  z #=> 6
-end
-</pre>
-
-<pre>
-# Instance variables
-class AnimalHouse
-  include Dataflow
-  declare :small_cat, :big_cat
-
-  def fetch_big_cat
-    Thread.new { unify big_cat, small_cat.upcase }
-    unify small_cat, 'cat'
-    big_cat
-  end
-end
-
-AnimalHouse.new.fetch_big_cat #=> 'CAT'
-</pre>
-
-<pre>
-# Data-driven concurrency
-include Dataflow
-
-local do |stream, doubles, triples, squares|
-  unify stream, Array.new(5) { local {|v| v } }
-
-  Thread.new { unify doubles, stream.map {|n| n*2 } }
-  Thread.new { unify triples, stream.map {|n| n*3 } }
-  Thread.new { unify squares, stream.map {|n| n**2 } }  
-
-  Thread.new { stream.each {|x| unify x, rand(100) } }
-
-  puts "original: #{stream.inspect}"
-  puts "doubles:  #{doubles.inspect}"
-  puts "triples:  #{triples.inspect}"
-  puts "squares:  #{squares.inspect}"  
-end
-</pre>
-
-h1. Ports using Dataflow
-
-Ports are an extension of the declarative concurrent model to support nondeterministic behavior. They accomplish this through the use of a single state variable. Ports are also inspired by the Oz language.
-
-An Actor class in the style of Erlang message-passing processes is also provided. It makes use of the asynchronous behavior of ports, but otherwise uses no state variables.
-
-h1. Examples using Ports
-
-<pre>
-include Dataflow
-
-local do |port, stream|
-  unify port, Dataflow::Port.new(stream)
-  Thread.new {port.send 2}
-  Thread.new {port.send 8}
-  Thread.new {port.send 1024}
-  stream.take(3).sort #=> [2, 8, 1024]
-end
-</pre>
-
-h1. Examples using Actors
-
-<pre>
-include Dataflow
-
-Ping = Actor.new {
-  3.times {
-    case receive
-    when "Ping"
-      puts "Ping"
-      Pong.send "Pong"
-    end
-  }
-}
-
-Pong = Actor.new {
-  3.times {
-    case receive
-    when "Pong"
-      puts "Pong"
-      Ping.send "Ping"
-    end
-  }
-}
-
-Actor.new { Ping.send "Ping" }
-
-Ping.join
-Pong.join
-</pre>
-
-h1. References
-
-The basis of dataflow variables around a language is not common among
-popular languages and may be confusing to some. For an in-depth
-introduction to the Oz language and the techniques used in this
-library (including port objects and comparisons to Erlang message passing) see the book "Concepts, Techniques, and Models of Computer Programming":http://en.wikipedia.org/wiki/Concepts,_Techniques,_and_Models_of_Computer_Programming
-
-h1. Contributors
-
-larrytheliquid, amiller
+Furthermore, "Neverblock":http://github.com/oldmoe/neverblock/tree/master
+implements non-blocking IO with Fibers, making the most common case of
+blocking not an issue anymore. Will non-blocking IO be enough
+"asyncronous behavior"? Are the startup cost and memory advantages
+worth sacrificing true native-thread concurrency? Is there a neat way
+to combine fibers and threads? The purpose of this
+branch is to explore these questions.
