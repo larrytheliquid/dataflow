@@ -57,5 +57,5 @@ module Dataflow
   UnificationError = Class.new StandardError
 end
 
-# require "#{File.dirname(__FILE__)}/lib/port"
+require "#{File.dirname(__FILE__)}/lib/port"
 # require "#{File.dirname(__FILE__)}/lib/actor"

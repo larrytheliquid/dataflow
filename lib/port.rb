@@ -1,9 +1,6 @@
-require 'thread'
-
 module Dataflow
   class Port  
     include Dataflow
-    LOCK = Mutex.new
 
     class Stream
       include Dataflow
@@ -41,13 +38,10 @@ module Dataflow
       unify x, @tail
     end
   
-    # This needs to be synchronized because it uses @tail as state
     def send value
-      LOCK.synchronize do
-        unify @tail.head, value
-        unify @tail.tail, Stream.new
-        @tail = @tail.tail
-      end
+      unify @tail.head, value
+      unify @tail.tail, Stream.new
+      @tail = @tail.tail
     end
   end
 end

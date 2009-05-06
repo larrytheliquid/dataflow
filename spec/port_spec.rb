@@ -17,9 +17,9 @@ describe 'Asyncronously sending to a Port' do
   it 'extends the length of the stream and does not preserve order' do
     local do |port, stream|
       unify port, Dataflow::Port.new(stream)
-      Thread.new {port.send 2}
-      Thread.new {port.send 8}
-      Thread.new {port.send 1024}
+      Fiber.new {port.send 2}.resume
+      Fiber.new {port.send 8}.resume
+      Fiber.new {port.send 1024}.resume
       stream.take(3).sort.should == [2, 8, 1024]
     end
   end
