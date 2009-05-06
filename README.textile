@@ -7,7 +7,7 @@ particular branch is experimenting with using Fibers instead of
 threads. A Fiber in Ruby 1.9 has significantly less creation and
 memory costs compared to threads. On the downside, true concurrency
 from multi-core processors is not realized. Nevertheless, Dataflow can
-be beneficial for declarative program modeling even withou true
+be beneficial for declarative program modeling even without true
 concurrency. 
 
 Furthermore, "Neverblock":http://github.com/oldmoe/neverblock/tree/master
