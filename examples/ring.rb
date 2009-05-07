@@ -22,4 +22,3 @@ N.times do |n|
 end
 
 actors[0].send :msg
-actors.each { |x| x.join }
