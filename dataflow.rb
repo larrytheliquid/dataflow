@@ -24,11 +24,17 @@ module Dataflow
     variable.__unify__ value
   end
 
+  def by_need(&block)
+    Variable.new &block
+  end
+
   # Note that this class uses instance variables rather than nicely
   # initialized instance variables in get/set methods for memory and
   # performance reasons
   class Variable
     instance_methods.each { |m| undef_method m unless m =~ /^__/ }
+    def initialize(&block) @__trigger__ = block if block_given? end
+
     # Lazy-load callers to be nice on memory usage
     def __callers__() @__callers__ ||= Array.new end
 
@@ -45,11 +51,21 @@ module Dataflow
       @__value__
     end
 
+    def __activate_trigger__
+      @__value__ = @__trigger__.call
+      @__bound__ = true
+      @__trigger__ = nil # garbage collect trigger
+    end
+
     def method_missing(name, *args, &block)
       unless @__bound__
-        __callers__ << Fiber.current
-        Fiber.yield
-      end
+        if @__trigger__
+          __activate_trigger__
+        else
+          __callers__ << Fiber.current
+          Fiber.yield
+        end
+      end        
       @__value__.__send__(name, *args, &block)
     end
   end
