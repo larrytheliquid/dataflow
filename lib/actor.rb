@@ -1,5 +1,5 @@
 module Dataflow
-  class Actor < Thread
+  class Actor
     include Dataflow
     declare :port
     # An instance variable is needed for stream.
@@ -8,8 +8,8 @@ module Dataflow
     def initialize(&block)
       @stream = Variable.new
       unify port, Port.new(@stream)
-      # Run this block in a new thread
-      super { instance_eval &block }
+      # Run this block in a newly resumed fiber
+      Fiber.new { instance_eval &block }.resume
     end
 
     def send message

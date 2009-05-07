@@ -58,4 +58,4 @@ module Dataflow
 end
 
 require "#{File.dirname(__FILE__)}/lib/port"
-# require "#{File.dirname(__FILE__)}/lib/actor"
+require "#{File.dirname(__FILE__)}/lib/actor"
