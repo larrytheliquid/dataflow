@@ -85,6 +85,18 @@ local do |stream, doubles, triples, squares|
 end
 </pre>
 
+<pre>
+# By-need trigger laziness
+include Dataflow
+
+local do |x, y, z|
+  Thread.new { unify x, by_need { 3 } }
+  Thread.new { unify y, by_need { 4 } }
+  Thread.new { unify z, x + y }
+  z #=> 7
+end
+</pre>
+
 h1. Ports using Dataflow
 
 Ports are an extension of the declarative concurrent model to support nondeterministic behavior. They accomplish this through the use of a single state variable. Ports are also inspired by the Oz language.
