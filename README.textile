@@ -153,7 +153,7 @@ h1. References
 The basis of dataflow variables around a language is not common among
 popular languages and may be confusing to some. For an in-depth
 introduction to the Oz language and the techniques used in this
-library (including port objects and comparisons to Erlang message passing) see the book "Concepts, Techniques, and Models of Computer Programming":http://en.wikipedia.org/wiki/Concepts,_Techniques,_and_Models_of_Computer_Programming
+library (including by_need triggers, port objects, and comparisons to Erlang message passing) see the book "Concepts, Techniques, and Models of Computer Programming":http://en.wikipedia.org/wiki/Concepts,_Techniques,_and_Models_of_Computer_Programming
 
 h1. Contributors
 
