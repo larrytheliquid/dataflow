@@ -90,11 +90,23 @@ end
 include Dataflow
 
 local do |x, y, z|
-  Thread.new { unify x, by_need { 3 } }
   Thread.new { unify y, by_need { 4 } }
   Thread.new { unify z, x + y }
+  Thread.new { unify x, by_need { 3 } }
   z #=> 7
 end
+</pre>
+
+<pre>
+# Need-later future expressions
+include Dataflow
+
+local do |x, y, z|
+  unify y, need_later { 4 }
+  unify z, need_later { x + y }
+  unify x, need_later { 3 }
+  z #=> 7
+end        
 </pre>
 
 h1. Ports using Dataflow

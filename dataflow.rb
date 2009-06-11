@@ -28,6 +28,13 @@ module Dataflow
     Variable.new &block
   end
 
+  def need_later(&block)
+    local do |future|
+      Thread.new { unify future, block.call }
+      future
+    end
+  end
+
   # Note that this class uses instance variables rather than nicely
   # initialized instance variables in get/set methods for memory and
   # performance reasons
