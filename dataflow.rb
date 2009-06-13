@@ -7,7 +7,8 @@ module Dataflow
         readers.each do |name|
           class_eval <<-RUBY
             def #{name}
-              @__dataflow_#{name}__ ||= Variable.new
+              return @__dataflow_#{name}__ if defined? @__dataflow_#{name}__
+              Variable::LOCK.synchronize { @__dataflow_#{name}__ ||= Variable.new }
             end
           RUBY
         end
@@ -35,7 +36,7 @@ module Dataflow
     end
   end
 
-  # Note that this class uses instance variables rather than nicely
+  # Note that this class uses instance variables directly rather than nicely
   # initialized instance variables in get/set methods for memory and
   # performance reasons
   class Variable
@@ -54,7 +55,7 @@ module Dataflow
           @__value__ = value
           @__bound__ = true
           __binding_condition__.broadcast # wakeup all method callers
-          @__binding_condition__ = nil # garbage collect condition
+          remove_instance_variable :@__binding_condition__ # GC
         end
       end
       @__value__
@@ -63,20 +64,19 @@ module Dataflow
     def __activate_trigger__
       @__value__ = @__trigger__.call
       @__bound__ = true
-      @__trigger__ = nil # garbage collect trigger
+      remove_instance_variable :@__trigger__ # GC
     end
 
     def method_missing(name, *args, &block)
       LOCK.synchronize do
-        # TODO: Cache a instance_eval'd method on this object
         unless @__bound__
           if @__trigger__
             __activate_trigger__
           else
             __binding_condition__.wait
           end
-        end        
-      end
+        end
+      end unless @__bound__
       @__value__.__send__(name, *args, &block)
     end
   end
