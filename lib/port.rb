@@ -35,18 +35,18 @@ module Dataflow
     end
   
     # Create a stream object, bind it to the input variable
-    # Instance variables are necessary because @tail is state
+    # Instance variables are necessary because @end is state
     def initialize(x)
-      @tail = Stream.new
-      unify x, @tail
+      @end = Stream.new
+      unify x, @end
     end
   
-    # This needs to be synchronized because it uses @tail as state
+    # This needs to be synchronized because it uses @end as state
     def send value
       LOCK.synchronize do
-        unify @tail.head, value
-        unify @tail.tail, Stream.new
-        @tail = @tail.tail
+        unify @end.head, value
+        unify @end.tail, Stream.new
+        @end = @end.tail
       end
     end
   end
