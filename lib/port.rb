@@ -7,7 +7,7 @@ module Dataflow
 
     class Stream
       include Dataflow
-      declare :tail, :head
+      declare :head, :tail
     
       # Defining each allows us to use the enumerable mixin
       # None of the list can be garbage collected less the head is
@@ -22,7 +22,7 @@ module Dataflow
         end
       end
 
-      # Backported Enumerable#take for JRuby in 1.8.6 mode
+      # Backported Enumerable#take for any 1.8.6 compatible Ruby
       unless method_defined?(:take)
         def take(num)
           result = []

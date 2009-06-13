@@ -4,11 +4,7 @@ include Dataflow
 # Send M messages each along a ring of N nodes
 N = 4
 M = 2
-
-actors = []
-N.times do |n| 
-  actors[n] = Variable.new 
-end
+actors = Array.new(N) { Dataflow::Variable.new }
 
 N.times do |n|
   unify actors[n], Actor.new {
@@ -21,5 +17,5 @@ N.times do |n|
   }
 end
 
-actors[0].send :msg
+actors.first.send :msg
 actors.each { |x| x.join }

@@ -21,7 +21,6 @@ Pong = Actor.new {
   }
 }
 
-Actor.new { Ping.send "Ping" }
-
+Ping.send "Ping"
 Ping.join
 Pong.join
