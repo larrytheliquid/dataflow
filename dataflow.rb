@@ -1,6 +1,8 @@
 require 'monitor'
 
 module Dataflow
+  VERSION = "0.1.0"
+  
   def self.included(cls)
     class << cls
       def declare(*readers)
