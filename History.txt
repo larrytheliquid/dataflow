@@ -1,3 +1,10 @@
+== 0.1.1 / 2009-06-13
+ 
+* Minor enhancements
+ 
+  * Got the "require_path" set correctly so rubygems can be used =)
+ 
+
 == 0.1.0 / 2009-06-13
  
 * 1 major enhancement

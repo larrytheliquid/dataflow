@@ -12,15 +12,17 @@ desc "Run the specs"
 task :default => :spec
 
 spec = Gem::Specification.new do |s|
-  s.name           = "dataflow"
-  s.version        = Dataflow::VERSION
-  s.author         = "Larry Diehl"
-  s.email          = "larrytheliquid" + "@" + "gmail.com"
-  s.homepage       = "http://github.com/larrytheliquid/dataflow"
-  s.summary        = "Dataflow concurrency for Ruby (inspired by the Oz language)"
-  s.description    = s.summary
-  s.files          = %w[LICENSE History.txt Rakefile README.textile dataflow.rb] + Dir["lib/**/*"] + Dir["examples/**/*"]
-  s.test_files     = Dir["spec/**/*"]
+  s.name              = "dataflow"
+  s.rubyforge_project = s.name
+  s.version           = Dataflow::VERSION
+  s.author            = "Larry Diehl"
+  s.email             = "larrytheliquid" + "@" + "gmail.com"
+  s.homepage          = "http://github.com/larrytheliquid/dataflow"
+  s.summary           = "Dataflow concurrency for Ruby (inspired by the Oz language)"
+  s.description       = s.summary
+  s.files             = %w[LICENSE History.txt Rakefile README.textile dataflow.rb] + Dir["lib/**/*"] + Dir["examples/**/*"]
+  s.require_path      = '.'
+  s.test_files        = Dir["spec/**/*"]
 end
 
 Rake::GemPackageTask.new(spec) do |package|
