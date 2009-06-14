@@ -34,6 +34,11 @@ side-effects. Use regular Ruby threading to create threads, use
 "local" or "declare" to create new variables, and use "unify" to bind
 variables.
 
+h1. Install
+
+To install the latest release as a gem:
+<pre>sudo gem install dataflow</pre>
+
 h1. Examples
 
 <pre>
