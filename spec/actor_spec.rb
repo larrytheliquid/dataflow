@@ -1,5 +1,4 @@
 require "#{File.dirname(__FILE__)}/spec_helper"
-Thread.abort_on_exception = true
 
 describe 'Syncronously sending to an Actor' do  
   it 'passes in each message received and preserves order' do
