@@ -57,7 +57,7 @@ module Dataflow
           @__value__ = value
           @__bound__ = true
           __binding_condition__.broadcast # wakeup all method callers
-          remove_instance_variable :@__binding_condition__ # GC
+          @__binding_condition__ = nil # GC
         end
       end
       @__value__
@@ -66,7 +66,7 @@ module Dataflow
     def __activate_trigger__
       @__value__ = @__trigger__.call
       @__bound__ = true
-      remove_instance_variable :@__trigger__ # GC
+      @__trigger__ = nil # GC
     end
 
     def method_missing(name, *args, &block)
