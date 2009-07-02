@@ -53,7 +53,7 @@ module Dataflow
       LOCK.synchronize do
         __activate_trigger__ if @__trigger__
         if @__bound__
-          raise UnificationError if @__value__ != value
+          raise UnificationError if self != value
         else
           @__value__ = value
           @__bound__ = true
