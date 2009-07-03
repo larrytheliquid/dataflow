@@ -5,6 +5,8 @@
   * Made equality between objects and dataflow variables more transparent
  
 * Minor enhancements
+  
+  * Made #inspect work with unbound variables to not crash deubggers/repls/etc
  
   * Made relationship between lazy and dataflow behavior more strict
 
