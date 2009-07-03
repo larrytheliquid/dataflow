@@ -1,6 +1,6 @@
 require 'rubygems'
 require 'spec'
-require 'dataflow'
+require "#{File.dirname(__FILE__)}/../dataflow"
 
 Thread.abort_on_exception = true
 
