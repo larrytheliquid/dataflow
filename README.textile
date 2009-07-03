@@ -39,6 +39,10 @@ h1. Install
 To install the latest release as a gem:
 <pre>sudo gem install dataflow</pre>
 
+h1. IRC
+
+<pre>#dataflow-gem @ freenode.net</pre>
+
 h1. Examples
 
 <pre>
