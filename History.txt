@@ -1,3 +1,13 @@
+== trunk
+
+* Major enhancements
+ 
+  * Made equality between objects and dataflow variables more transparent
+ 
+* Minor enhancements
+ 
+  * Made relationship between lazy and dataflow behavior more strict
+
 == 0.1.1 / 2009-06-13
  
 * Minor enhancements
