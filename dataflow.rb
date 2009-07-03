@@ -87,11 +87,6 @@ module Dataflow
   UnificationError = Class.new StandardError
 end
 
-# make equality use method calls
-class Object
-  def ==(other)
-    __id__ == other.__id__
-  end
-end
+require "#{File.dirname(__FILE__)}/lib/equality"
 require "#{File.dirname(__FILE__)}/lib/port"
 require "#{File.dirname(__FILE__)}/lib/actor"
