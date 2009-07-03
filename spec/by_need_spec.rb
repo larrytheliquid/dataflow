@@ -15,39 +15,39 @@ describe 'A by_need expression' do
   describe 'when a bound variable is unified to it' do
     it 'passes unififcation for equal values' do
       local do |x|
-        unify x, by_need { :a }
-        unify x, :a
-        x.should == :a
+        unify x, by_need { 1 }
+        unify x, 1
+        x.should == 1
 
-        y = by_need { :a }
-        unify y, :a
-        y.should == :a
+        y = by_need { 1 }
+        unify y, 1
+        y.should == 1
       end
     end
 
     it 'fails unififcation for unequal values' do
       local do |x|
-        unify x, by_need { :a }
-        lambda { unify x, :b }.should raise_error(Dataflow::UnificationError)
+        unify x, by_need { 1 }
+        lambda { unify x, 2 }.should raise_error(Dataflow::UnificationError)
 
-        y = by_need { :a }
-        lambda { unify y, :b }.should raise_error(Dataflow::UnificationError)
+        y = by_need { 1 }
+        lambda { unify y, 2 }.should raise_error(Dataflow::UnificationError)
       end
     end
 
     describe 'when it is unified to a bound variable' do
       it 'passes unififcation for equal values' do
         local do |x|
-          unify x, :a
-          unify x, by_need { :a }
-          x.should == :a
+          unify x, 1
+          unify x, by_need { 1 }
+          x.should == 1
         end
       end
       
       it 'fails unification for unequal values' do
         local do |x|
-          unify x, :a
-          lambda { unify x, by_need { :b } }.should raise_error(Dataflow::UnificationError)
+          unify x, 1
+          lambda { unify x, by_need { 2 } }.should raise_error(Dataflow::UnificationError)
         end
       end
     end
