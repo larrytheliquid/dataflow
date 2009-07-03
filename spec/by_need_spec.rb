@@ -18,6 +18,10 @@ describe 'A by_need expression' do
         unify x, by_need { :a }
         unify x, :a
         x.should == :a
+
+        y = by_need { :a }
+        unify y, :a
+        y.should == :a
       end
     end
 
@@ -25,6 +29,9 @@ describe 'A by_need expression' do
       local do |x|
         unify x, by_need { :a }
         lambda { unify x, :b }.should raise_error(Dataflow::UnificationError)
+
+        y = by_need { :a }
+        lambda { unify y, :b }.should raise_error(Dataflow::UnificationError)
       end
     end
 
