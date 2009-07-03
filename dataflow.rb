@@ -51,6 +51,7 @@ module Dataflow
     
     def __unify__(value)
       LOCK.synchronize do
+        __activate_trigger__ if @__trigger__
         if @__bound__
           raise UnificationError if self != value
         else
