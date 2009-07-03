@@ -42,17 +42,17 @@ module Dataflow
   # initialized instance variables in get/set methods for memory and
   # performance reasons
   class Variable
-    instance_methods.each { |m| undef_method m unless m =~ /^__/ }
+    instance_methods.each { |m| undef_method m }
     LOCK = Monitor.new
     def initialize(&block) @__trigger__ = block if block_given? end
     
     # Lazy-load conditions to be nice on memory usage
     def __binding_condition__() @__binding_condition__ ||= LOCK.new_cond end
-
+    
     def __unify__(value)
       LOCK.synchronize do
         if @__bound__
-          raise UnificationError if @__value__ != value
+          raise UnificationError if self != value
         else
           @__value__ = value
           @__bound__ = true
@@ -86,5 +86,11 @@ module Dataflow
   UnificationError = Class.new StandardError
 end
 
+# make equality use method calls
+class Object
+  def ==(other)
+    __id__ == other.__id__
+  end
+end
 require "#{File.dirname(__FILE__)}/lib/port"
 require "#{File.dirname(__FILE__)}/lib/actor"
