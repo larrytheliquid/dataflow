@@ -1,7 +1,11 @@
 require "#{File.dirname(__FILE__)}/spec_helper"
 
 describe 'Unifying a bound value' do
-  [3, 2.0, Object.new, Class.new.new, "str", :sym, [], {}, nil, true, false].each do |type|
+  [nil, true, false,
+   :sym, "str", /regex/,
+   3, 2.0,
+   Object.new, Class.new.new,
+   [], {}].each do |type|
     describe "for #{type.class} instances" do
       it 'passes unification for an object of equal value' do
         local do |var, var2|

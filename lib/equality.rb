@@ -16,3 +16,13 @@ class Symbol
     __id__ == other.__id__
   end
 end
+
+class Regexp
+  def ==(other)
+    other.is_a?(Regexp) && 
+    casefold? == other.casefold? &&
+    kcode == other.kcode &&
+    options == other.options &&
+    source == other.source
+  end
+end
