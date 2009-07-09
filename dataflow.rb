@@ -1,7 +1,7 @@
 require 'monitor'
 
 module Dataflow
-  VERSION = "0.1.1"
+  VERSION = "0.2.0"
   
   def self.included(cls)
     class << cls
@@ -88,6 +88,5 @@ module Dataflow
   UnificationError = Class.new StandardError
 end
 
-require "#{File.dirname(__FILE__)}/lib/equality"
-require "#{File.dirname(__FILE__)}/lib/port"
-require "#{File.dirname(__FILE__)}/lib/actor"
+require "#{File.dirname(__FILE__)}/dataflow/port"
+require "#{File.dirname(__FILE__)}/dataflow/actor"

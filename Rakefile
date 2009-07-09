@@ -20,7 +20,7 @@ spec = Gem::Specification.new do |s|
   s.homepage          = "http://github.com/larrytheliquid/dataflow"
   s.summary           = "Dataflow concurrency for Ruby (inspired by the Oz language)"
   s.description       = s.summary
-  s.files             = %w[LICENSE History.txt Rakefile README.textile dataflow.rb] + Dir["lib/**/*"] + Dir["examples/**/*"]
+  s.files             = %w[LICENSE HISTORY Rakefile README.textile dataflow.rb] + Dir["dataflow/**/*"] + Dir["examples/**/*"]
   s.require_path      = '.'
   s.test_files        = Dir["spec/**/*"]
 end

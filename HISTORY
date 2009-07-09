@@ -3,6 +3,7 @@
 * Major enhancements
  
   * Made equality between objects and dataflow variables more transparent
+    (load equality changes with: require 'dataflow/equality')
  
 * Minor enhancements
   

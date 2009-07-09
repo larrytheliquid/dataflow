@@ -169,6 +169,16 @@ Ping.join
 Pong.join
 </pre>
 
+h1. Equality
+
+Most Ruby implmentations will not use method calls for equality
+operations in base types/classes. This means equality between dataflow
+variables and those base types will not behave as expected. Require
+the following to get equality on base types that uses method calls,
+while still passing rubyspec:
+
+<pre>require "dataflow/equality"</pre>
+
 h1. References
 
 The basis of dataflow variables around a language is not common among
