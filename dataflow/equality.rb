@@ -7,13 +7,13 @@
 
 class Object
   def ==(other)
-    __id__ == other.__id__
+    object_id == other.object_id
   end
 end
 
 class Symbol
   def ==(other)
-    __id__ == other.__id__
+    object_id == other.object_id
   end
 end
 

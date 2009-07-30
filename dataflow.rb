@@ -42,7 +42,7 @@ module Dataflow
   # initialized instance variables in get/set methods for memory and
   # performance reasons
   class Variable
-    instance_methods.each { |m| undef_method m }
+    instance_methods.each { |m| undef_method m unless m =~ /^__/ }
     LOCK = Monitor.new
     def initialize(&block) @__trigger__ = block if block_given? end
     
