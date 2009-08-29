@@ -68,6 +68,8 @@ Dataflow.local do |x, y, z|
   Thread.new { Dataflow.unify x, 1 }
   z #=> 6
 end
+
+# Note that a gobal Dataflow.declare is not supported
 </pre>
 
 <pre>
@@ -150,10 +152,6 @@ local do |x|
   end
   x #=> 1337
 end
-
-# NOTE: flow is used internally by need_later. This means that you
-# could override flow to do other things like use a threadpool,
-# and this would also affect need_later.
 </pre>
 
 <pre>
@@ -182,6 +180,29 @@ local do |queue, first, second|
   second #=> 2
 end
 </pre>
+
+h1. Debugging
+
+If you are having trouble and need to debug dataflow variables, simply call #inspect.
+
+If the variable has already been bound, it call inspect on its bound value like normal.However, if the variable is not bound yet then you will get a special string that contains the proxies #__id__ that you can use to track down which proxy objects are being passed around to which parts of your program:
+<pre>
+  local do |my_var| 
+    my_var.inspect # => #<Dataflow::Variable:2637860 unbound> 
+  end
+</pre>
+
+h1. Fork method customization
+
+By default both #flow and #need_later use Thread.fork as their fork method. Youc an access the fork method via Dataflow.forker.
+
+If you would like to use a custom forker, simple set it to a method that accepts and calls a block (for an example of a synchronous forker, see spec/forker_spec.rb):
+<pre>
+  Dataflow.forker = MyClass.method(:fork_with_threadpool)
+</pre>
+
+Also note that #flow is used interally by #need_later, in case you want to override that specifically.
+
 
 h1. Ports using Dataflow
 

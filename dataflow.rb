@@ -2,6 +2,10 @@ require 'monitor'
 
 module Dataflow
   VERSION = "0.3.0"
+  class << self
+    attr_accessor :forker
+  end
+  self.forker = Thread.method(:fork)
   
   def self.included(cls)
     class << cls
@@ -36,7 +40,7 @@ module Dataflow
   end
 
   def flow(output=nil, &block)
-    Thread.new do
+    Dataflow.forker.call do
       result = block.call
       unify output, result if output
     end
