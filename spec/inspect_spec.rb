@@ -3,7 +3,7 @@ require "#{File.dirname(__FILE__)}/spec_helper"
 describe "An unbound variable" do
   it "should be inspectable for debugging purposes" do
     local do |unbound|
-      unbound.inspect.should =~ /#<Dataflow::Variable:[0-9]+ unbound>/
+      unbound.inspect.should =~ /#<Dataflow::Variable:-?\d+ unbound>/
     end
   end
 end
