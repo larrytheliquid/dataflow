@@ -53,7 +53,7 @@ module Dataflow
       LOCK.synchronize do
         __activate_trigger__ if @__trigger__
         if @__bound__
-          raise UnificationError if self != value
+          raise UnificationError, "#{@__value__.inspect} != #{value.inspect}" if self != value
         else
           @__value__ = value
           @__bound__ = true
@@ -73,7 +73,7 @@ module Dataflow
     def method_missing(name, *args, &block)
       LOCK.synchronize do
         unless @__bound__
-          return '#<Dataflow::Variable unbound>' if name == :inspect
+          return "#<Dataflow::Variable:#{__id__} unbound>" if name == :inspect
           if @__trigger__
             __activate_trigger__
           else
