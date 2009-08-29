@@ -35,9 +35,16 @@ module Dataflow
     variables.each{|v| v.__wait__ }
   end
 
+  def flow(output=nil, &block)
+    Thread.new do
+      result = block.call
+      unify output, result if output
+    end
+  end
+
   def need_later(&block)
     local do |future|
-      Thread.new { unify future, block.call }
+      flow { unify future, block.call }
       future
     end
   end
