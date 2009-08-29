@@ -1,4 +1,26 @@
-== trunk
+== 0.3.0 / 2009-08-29
+
+* Major enhancements
+ 
+  * "flow" abstraction for threading (use it to create threads and optionally 
+    pass it a variable to be bound output, or override it to modify need_later
+    for other threading strategies such as thread pools)
+
+  * Dataflow::FutureQueue
+
+  * Nested binding through variables possible
+ 
+* Minor enhancements
+  
+  * Better #inspect and UnificationError debugging output
+ 
+  * "barrier" abstraction for manually preventing execution until variable
+    arguments have been bound
+
+  * Use mixin methods as class/module methods optionally
+    e.g. Dataflow.local {|v| v }
+
+== 0.2.1 / 2009-07-29
 
  * Minor enhancements
    
@@ -21,8 +43,7 @@
  
 * Minor enhancements
  
-  * Got the "require_path" set correctly so rubygems can be used =)
- 
+  * Got the "require_path" set correctly so rubygems can be used =) 
 
 == 0.1.0 / 2009-06-13
  
