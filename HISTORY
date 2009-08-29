@@ -1,3 +1,11 @@
+== 0.3.1 / 2009-08-29
+
+ * Minor enhancements
+   
+   * Dataflow.forker= for setting custom forkers (e.g. a threadpool forker)
+   
+   * Dataflow#local returns an anonymous variable when called without a block
+
 == 0.3.0 / 2009-08-29
 
 * Major enhancements
