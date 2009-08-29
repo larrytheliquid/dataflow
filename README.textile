@@ -199,6 +199,7 @@ h1. Debugging
 If you are having trouble and need to debug dataflow variables, simply call #inspect.
 
 If the variable has already been bound, it call inspect on its bound value like normal.However, if the variable is not bound yet then you will get a special string that contains the proxies #__id__ that you can use to track down which proxy objects are being passed around to which parts of your program:
+
 <pre>
 include Dataflow
 local do |my_var| 
@@ -211,6 +212,7 @@ h1. Fork method customization
 By default both #flow and #need_later use Thread.fork as their fork method. Youc an access the fork method via Dataflow.forker.
 
 If you would like to use a custom forker, simple set it to an object that responds to #call and internally calls a block passed to it (for an example of a synchronous forker, see spec/forker_spec.rb):
+
 <pre>
 Dataflow.forker = MyClass.method(:fork_with_threadpool)
 </pre>
