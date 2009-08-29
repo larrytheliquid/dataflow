@@ -53,6 +53,7 @@ module Dataflow
       LOCK.synchronize do
         __activate_trigger__ if @__trigger__
         if @__bound__
+          return @__value__.__unify__(value) if @__value__.__dataflow__? rescue nil
           raise UnificationError, "#{@__value__.inspect} != #{value.inspect}" if self != value
         else
           @__value__ = value
@@ -82,6 +83,10 @@ module Dataflow
         end
       end unless @__bound__
       @__value__.__send__(name, *args, &block)
+    end
+
+    def __dataflow__?
+      true
     end
   end
 

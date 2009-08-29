@@ -125,4 +125,17 @@ context 'Using "declare" for object-specific read-only attributes' do
       end.should raise_error(Dataflow::UnificationError)
     end
   end
+
+  describe 'Binding a variable that proxies through another' do
+    it 'binds through successfully' do
+      local do |x, y|
+        lambda do
+          unify x, y
+          unify x, 1337
+          x.should == 1337
+          y.should == 1337
+        end.should_not raise_error
+      end
+    end
+  end
 end
