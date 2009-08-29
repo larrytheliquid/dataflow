@@ -23,6 +23,7 @@ module Dataflow
   end
   
   def local(&block)
+    return Variable.new unless block_given?
     vars = Array.new(block.arity) { Variable.new }
     block.call *vars
   end

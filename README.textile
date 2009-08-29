@@ -181,28 +181,41 @@ local do |queue, first, second|
 end
 </pre>
 
+h1. Anonymous variables
+
+Sometimes you may want to pack a data structure with variables that do not need to be referenced with labels. For those cases anonymous variables are a good choice, here are some options:
+
+<pre>
+include Dataflow
+Array.new(3) { Dataflow::Variable.new }
+Array.new(3) { Dataflow.local }
+Array.new(3) { local }
+# and technically not anonymous
+Array.new(3) { local {|v| v } }
+</pre>
+
 h1. Debugging
 
 If you are having trouble and need to debug dataflow variables, simply call #inspect.
 
 If the variable has already been bound, it call inspect on its bound value like normal.However, if the variable is not bound yet then you will get a special string that contains the proxies #__id__ that you can use to track down which proxy objects are being passed around to which parts of your program:
 <pre>
-  local do |my_var| 
-    my_var.inspect # => #<Dataflow::Variable:2637860 unbound> 
-  end
+include Dataflow
+local do |my_var| 
+  my_var.inspect # => #<Dataflow::Variable:2637860 unbound> 
+end
 </pre>
 
 h1. Fork method customization
 
 By default both #flow and #need_later use Thread.fork as their fork method. Youc an access the fork method via Dataflow.forker.
 
-If you would like to use a custom forker, simple set it to a method that accepts and calls a block (for an example of a synchronous forker, see spec/forker_spec.rb):
+If you would like to use a custom forker, simple set it to an object that responds to #call and internally calls a block passed to it (for an example of a synchronous forker, see spec/forker_spec.rb):
 <pre>
-  Dataflow.forker = MyClass.method(:fork_with_threadpool)
+Dataflow.forker = MyClass.method(:fork_with_threadpool)
 </pre>
 
 Also note that #flow is used interally by #need_later, in case you want to override that specifically.
-
 
 h1. Ports using Dataflow
 
