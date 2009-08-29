@@ -44,7 +44,7 @@ module Dataflow
 
   def need_later(&block)
     local do |future|
-      flow { unify future, block.call }
+      flow(future) { block.call }
       future
     end
   end
