@@ -59,6 +59,18 @@ end
 </pre>
 
 <pre>
+# Module methods version
+ 
+Dataflow.local do |x, y, z|
+  # notice how the order automatically gets resolved
+  Thread.new { Dataflow.unify y, x + 2 }
+  Thread.new { Dataflow.unify z, y + 3 }
+  Thread.new { Dataflow.unify x, 1 }
+  z #=> 6
+end
+</pre>
+
+<pre>
 # Instance variables
 class AnimalHouse
   include Dataflow
@@ -116,6 +128,59 @@ local do |x, y, z|
   unify x, need_later { 3 }
   z #=> 7
 end        
+</pre>
+
+<pre>
+include Dataflow
+
+# flow without parameters
+local do |x|
+  flow do 
+    # other stuff
+    unify x, 1337
+  end
+  x #=> 1337
+end
+
+# flow with an output parameter
+local do |x|
+  flow(x) do
+    # other stuff
+    1337
+  end
+  x #=> 1337
+end
+
+# NOTE: flow is used internally by need_later. This means that you
+# could override flow to do other things like use a threadpool,
+# and this would also affect need_later.
+</pre>
+
+<pre>
+# barrier
+include Dataflow
+
+local do |lock1, lock2|
+  flow { unify lock1, :unlocked }
+  flow { unify lock2, :unlocked }
+  barrier lock1, lock2
+  puts "Barrier broken!"  
+end
+</pre>
+
+<pre>
+# FutureQueue
+include Dataflow
+
+local do |queue, first, second|
+  unify queue, Dataflow::FutureQueue.new
+  queue.pop first
+  queue.push 1
+  queue.push 2
+  queue.pop second
+  first #=> 1
+  second #=> 2
+end
 </pre>
 
 h1. Ports using Dataflow
