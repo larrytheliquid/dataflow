@@ -31,6 +31,10 @@ module Dataflow
     Variable.new &block
   end
 
+  def barrier(*variables)
+    variables.each{|v| v.__wait__ }
+  end
+
   def need_later(&block)
     local do |future|
       Thread.new { unify future, block.call }
@@ -71,10 +75,9 @@ module Dataflow
       @__trigger__ = nil # GC
     end
 
-    def method_missing(name, *args, &block)
+    def __wait__
       LOCK.synchronize do
-        unless @__bound__
-          return "#<Dataflow::Variable:#{__id__} unbound>" if name == :inspect
+        unless @__bound__          
           if @__trigger__
             __activate_trigger__
           else
@@ -82,6 +85,11 @@ module Dataflow
           end
         end
       end unless @__bound__
+    end
+
+    def method_missing(name, *args, &block)
+      return "#<Dataflow::Variable:#{__id__} unbound>" if !@__bound__ && name == :inspect
+      __wait__
       @__value__.__send__(name, *args, &block)
     end
 
