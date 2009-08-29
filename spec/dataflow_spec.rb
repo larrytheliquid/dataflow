@@ -125,17 +125,27 @@ context 'Using "declare" for object-specific read-only attributes' do
       end.should raise_error(Dataflow::UnificationError)
     end
   end
+end
 
-  describe 'Binding a variable that proxies through another' do
-    it 'binds through successfully' do
-      local do |x, y|
-        lambda do
-          unify x, y
-          unify x, 1337
-          x.should == 1337
-          y.should == 1337
-        end.should_not raise_error
-      end
+describe 'Binding a variable that proxies through another' do
+  it 'binds through successfully' do
+    local do |x, y|
+      lambda do
+        unify x, y
+        unify x, 1337
+        x.should == 1337
+        y.should == 1337
+      end.should_not raise_error
+    end
+  end
+end
+
+describe 'Using static/module method' do
+  it 'works like the mixin versions' do
+    Dataflow.local do |big_cat, small_cat|
+      Thread.new { Dataflow.unify big_cat, small_cat.upcase }
+      Dataflow.unify small_cat, 'cat'
+      big_cat.should == 'CAT'
     end
   end
 end

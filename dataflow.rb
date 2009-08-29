@@ -42,6 +42,8 @@ module Dataflow
     end
   end
 
+  extend self
+
   # Note that this class uses instance variables directly rather than nicely
   # initialized instance variables in get/set methods for memory and
   # performance reasons
