@@ -23,13 +23,21 @@ class ConnectionProtector
   end
 end
 
+def self.sometimes(num, connection)
+  if num%2 == 0
+    "#{num}:#{connection.value}"
+  else
+    "connection not used!"
+  end
+end
+
 protector = ConnectionProtector.new
-19.times { Thread.new {
+19.times {|i| Thread.new {
   protector.protect do |connection|
-    puts connection.value
+    puts sometimes(i, connection)
   end
 } }
-
+ 
 protector.protect do |connection|
-  puts connection.value
+  puts sometimes(20, connection)
 end
