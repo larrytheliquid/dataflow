@@ -115,6 +115,7 @@ module Dataflow
   UnificationError = Class.new StandardError
 end
 
+require "#{File.dirname(__FILE__)}/dataflow/enumerable"
 require "#{File.dirname(__FILE__)}/dataflow/port"
 require "#{File.dirname(__FILE__)}/dataflow/actor"
 require "#{File.dirname(__FILE__)}/dataflow/future_queue"
